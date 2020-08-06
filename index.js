@@ -11,6 +11,26 @@ var https=require('https');
 const {StringDecoder} = require('string_decoder');
 var config = require('./config');
 var fs=require('fs')
+var _data=require('./lib/data')
+var handlers=require('./lib/handlers')
+var helpers=require('./lib/helpers')
+//TODO delete the below file
+/*testing data read write
+_data.create('test','newFile',{'foo' : 'bar'},function(err){
+    console.log('this was the error',err)
+}) 
+_data.read('test','newFile',function(err,data){
+    console.log('this was the error',err,'and this was the data',data)
+})
+
+_data.update('test','newFile',{'Adnan' : 'Devika'},function(err){
+    console.log('this was the error',err)
+}) 
+_data.delete('test','new',function(err){
+    console.log('this was the error',err)
+})*/
+
+
 //define what the server does first and than make it listen on a port
 //The server would respond to all the request with a string
 
@@ -80,7 +100,7 @@ var unifiedServer = function(req,res){
         'queryStringObject' : queryStringObject,
         'method' : method,
         'headers' : headers,
-        'payload' : buffer
+        'payload' : helpers.parseJsonToObject(buffer)
     }
 
     //Route the request to the handler specified in the router
@@ -106,23 +126,9 @@ var unifiedServer = function(req,res){
     }); 
 }
 
-
-//Define the handlers
-var handlers={};
-
-//sample handler
-handlers.ping=function(data,callback){
-//Callback a http status code, and a payload object
-callback(200);
-
-};
-
-//Not found handler
-handlers.notFound=function(data,callback){
-callback(404);
-};
-
 //define a request router
 var router={
-    'ping' : handlers.ping
+    'ping' : handlers.ping,
+    'users' : handlers.users,
+    'tokens' : handlers.tokens
 };
